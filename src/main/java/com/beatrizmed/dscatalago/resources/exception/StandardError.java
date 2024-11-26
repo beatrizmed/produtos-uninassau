@@ -10,6 +10,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Setter
+//classe pra definir a mensagem de erro
 public class StandardError implements Serializable {
     private static final long serialVersionUID = 1L;
 

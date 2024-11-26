@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.Instant;
 
 @ControllerAdvice
+//classe para retornar a mensagem de erro para o usuário
 public class ResourceExceptionHandler{
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> entityNotFound(ResourceNotFoundException e, HttpServletRequest request){
-        HttpStatus status = HttpStatus.NOT_FOUND;
+        HttpStatus status = HttpStatus.NOT_FOUND; //variavel do codigo do erro
         StandardError err = new StandardError();
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());

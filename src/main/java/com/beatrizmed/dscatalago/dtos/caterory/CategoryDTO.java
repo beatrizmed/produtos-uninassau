@@ -8,10 +8,12 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
+//dto = transferencia de dados objetos
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+//manipulação de dados
 public class CategoryDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

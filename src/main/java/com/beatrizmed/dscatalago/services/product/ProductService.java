@@ -19,31 +19,35 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
+//serviço = ligado a regra de negócio
 @Service
 public class ProductService {
 
+    //injeção de dependencia
     @Autowired
     private ProductRepository productRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
 
+    //crud = pegando todos os registros da classe produtos / page = quebra na quantidade por paginas
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAllPaged(Pageable pageable){
-        Page<Product> list = productRepository.findAll(pageable);
-
-        return list.map(ProductDTO::new);
+    public Page<ProductDTO> findAllPaged(PageRequest pageRequest){
+        Page<Product> list = productRepository.findAll(pageRequest);
+        return list.map(ProductDTO::new); //mapear os registros
     }
 
-    @Transactional(readOnly = true)
+    //pra pesquisar o produto pelo nome ao invés do ID
+    @Transactional(readOnly = true) //só permite consultas
     public ProductDTO findProductByNome(String name){
         Optional<Product> obj = productRepository.findByName(name);
 
+        //tratamento de exceção, mas só mostra caso nao encontre o objeto (função lambda)
         Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
         return new ProductDTO(entity, entity.getCategories());
     }
 
+    //INSERT = inserir os dados
     @Transactional
     public ProductDTO insert(ProductDTO dto) {
         Product entity = new Product();
@@ -52,6 +56,7 @@ public class ProductService {
         return new ProductDTO(entity);
     }
 
+    //UPDATE = retorna as informaçòes da entidade
     @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
         try {
@@ -60,24 +65,26 @@ public class ProductService {
             entity = productRepository.save(entity);
             return new ProductDTO(entity);
         }catch (EntityNotFoundException e){
-            throw new ResourceNotFoundException("Id " + id + ", não encontrado");
+            throw new ResourceNotFoundException("Id " + id + ", não encontrado"); //tratamento de exceção / mostra quando não encontra o registro
         }
 
     }
 
+    //DELETE
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
         if(!productRepository.existsById(id)){
-            throw new ResourceNotFoundException("Recurso não encontrado");
+            throw new ResourceNotFoundException("Recurso não encontrado"); //tratamento de exceção / mostra quando não encontra o registro ou id
         }
 
         try {
             productRepository.deleteById(id);
         }catch (DataIntegrityViolationException e){
-            throw new DatabaseException("Falha de integridade referencial");
+            throw new DatabaseException("Falha de integridade referencial"); //tratamento de exceção
         }
     }
 
+    //pega as informações para lançar para a tabela
     private void copyDtoToEntity(ProductDTO dto, Product entity) {
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());

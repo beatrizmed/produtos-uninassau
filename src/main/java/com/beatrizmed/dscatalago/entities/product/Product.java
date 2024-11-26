@@ -32,12 +32,14 @@ public class Product implements Serializable {
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Instant date;
 
-    @Setter(AccessLevel.NONE)
+    //relacionado a categoria
+    @Setter(AccessLevel.NONE) //sem o set
     @ManyToMany
+    //terceira tabela, para fazer ligação de muitos para muitos
     @JoinTable(
             name = "tb_product_category",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    Set<Category> categories = new HashSet<>();
+    Set<Category> categories = new HashSet<>(); //pra pegar os registros
 }
